@@ -39,6 +39,6 @@ class DecGM(nn.Module):
                                  nn.LeakyReLU(inplace=True),
                                  nn.Linear(self.emb_dim, data_dim))
         
-    def forward(self, _, x):
-        x_hat = self.dec(x)
+    def forward(self, _, z):
+        x_hat = self.dec(z)
         return x_hat, torch.tensor(0.75).to(z.device)

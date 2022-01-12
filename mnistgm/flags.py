@@ -3,7 +3,7 @@ import argparse
 from utils.BaseFlags import parser as parser
 
 # DATASET NAME
-parser.add_argument('--dataset', type=str, default='SVHN_MNIST_text', help="name of the dataset")
+parser.add_argument('--dataset', type=str, default='GM_MNIST', help="name of the dataset")
 
 # DATA DEPENDENT
 # to be set by experiments themselves
@@ -18,7 +18,10 @@ parser.add_argument('--likelihood_m1', type=str, default='laplace', help="output
 parser.add_argument('--likelihood_m2', type=str, default='laplace', help="output distribution")
 
 # Gaussian mixture
-parser.add_argument('--emb_dim', type=int, default=8, help="dimension of the embedded Gaussian mixture")
+parser.add_argument('--emb_dim', type=int, default=8, help="dimension of the embedded Gaussian mixtures")
+parser.add_argument('--GM_sample_size', type=int, default=800, help="sample size of the Gaussian mixtures")
+parser.add_argument('--GM_radius', type=int, default=20, help="radius of the circle along which the Gaussian mixtures align")
+parser.add_argument('--GM_var', type=int, default=1/400, help="variance of the Gaussian mixtures")
 
 # SAVE and LOAD
 # to bet set by experiments themselves

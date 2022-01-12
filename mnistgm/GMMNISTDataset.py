@@ -12,6 +12,7 @@ import os.path
 import gzip
 import numpy as np
 import torch
+from torch.distributions import multivariate_normal as mv
 import random
 
 class VisionDataset(data.Dataset):
@@ -53,8 +54,8 @@ class VisionDataset(data.Dataset):
 
 
 class GMMNIST(VisionDataset):
-    training_file_mnist = 'training.pt';
-    test_file_mnist = 'test.pt';
+    training_file_mnist = 'training.pt'
+    test_file_mnist = 'test.pt'
     classes = ['1 - one', '2 - two', '3 - three', '4 - four',
                '5 - five', '6 - six', '7 - seven', '8 - eight']
 
@@ -90,23 +91,24 @@ class GMMNIST(VisionDataset):
 
     def __init__(self, flags,  alphabet, train=True, transform=None, target_transform=None):
         super(GMMNIST, self).__init__(flags.dir_data)
-        self.flags = flags;
-        self.dataset = 'MNIST_GM';
-        self.dataset_mnist = 'MNIST';
-        self.dataset_gm = 'GM';
+        self.flags = flags
+        self.dataset = 'MNIST_GM'
+        self.dataset_mnist = 'MNIST'
+        self.dataset_gm = 'GM'
         self.len_sequence = flags.len_sequence
+        self.sample_size = flags.GM_sample_size
         self.transform = transform
         self.target_transform = target_transform
         self.train = train  # training set or test set
-        self.alphabet = alphabet;
+        self.alphabet = alphabet
 
         if not self._check_exists_mnist():
             raise RuntimeError('Dataset MNIST not found.')
 
         if self.train:
-            data_file_mnist = self.training_file_mnist;
+            data_file_mnist = self.training_file_mnist
         else:
-            data_file_mnist = self.test_file_mnist;
+            data_file_mnist = self.test_file_mnist
 
         # Load the pt for MNIST
         self.data_mnist, self.labels_mnist = torch.load(os.path.join(self.processed_folder, data_file_mnist))
@@ -114,14 +116,12 @@ class GMMNIST(VisionDataset):
         self.labels_mnist = self.labels_mnist[(self.labels_mnist!=0)&(self.labels_mnist!=9)]
         
         # Generate Gaussian mixtures
-        self.gm_var = 1 * torch.eye(2,dtype=torch.float32)
-        radius = 20
+        self.gm_var = torch.eye(2,dtype=torch.float32) * flags.GM_var
         angles = np.pi * np.arange(8) / 4
-        self.gm_locs = np.array([[radius * np.cos(a), radius * np.sin(a)] for a in angles])
+        self.gm_locs = np.array([[flags.GM_radius * np.cos(a), flags.GM_radius * np.sin(a)] for a in angles])
         self.gms = [mv.MultivariateNormal(torch.tensor(mu, dtype=torch.float32), self.gm_var) for mu in self.gm_locs]
-        self.data_gm = torch.cat([d.sample((sample_size, )) for d in self.gms], dim=0)
-        self.data_gm = (self.data_gm - self.data_gm.mean(dim=0)) / self.data_gm.std(dim=0)
-        self.labels_gm = np.repeat(np.arange(1, 9, dtype=np.int32), sample_size)
+        self.data_gm = torch.cat([d.sample((self.sample_size, )) for d in self.gms], dim=0)
+        self.labels_gm = np.repeat(np.arange(1, 9, dtype=np.int32), self.sample_size)
         
         self.gauss_target_idx_mapping = self.process_gauss_labels()
         
@@ -140,7 +140,7 @@ class GMMNIST(VisionDataset):
         Returns:
             tuple: (image, target) where target is index of the target class.
         """
-        idx_mnist = int(index // self.flags.data_multiplications)
+        idx_mnist = int(np.floor(index / self.flags.data_multiplications))
         img_mnist, target_mnist = self.data_mnist[idx_mnist], int(self.labels_mnist[idx_mnist])
         
         # Randomly pick an index from the indices list
@@ -154,19 +154,18 @@ class GMMNIST(VisionDataset):
 
         if self.transform is not None:
             if self.transform[0] is not None:
-                img_mnist = self.transform[0](img_mnist);
-                vec_gm = self.transform[1](vec_gm);
+                img_mnist = self.transform[0](img_mnist)
 
         if self.target_transform is not None:
             target = self.target_transform(target_mnist)
         else:
-            target = target_mnist;
+            target = target_mnist
 
         batch = {'mnist': img_mnist, 'gm': vec_gm}
         return batch, target
 
     def __len__(self):
-        return len(self.data_mnist) * self.flags.data_multiplications
+        return int(len(self.data_mnist) - 1 * self.flags.data_multiplications)
 
     @property
     def raw_folder(self):

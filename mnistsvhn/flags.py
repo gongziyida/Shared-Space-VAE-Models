@@ -3,7 +3,7 @@ import argparse
 from utils.BaseFlags import parser as parser
 
 # DATASET NAME
-parser.add_argument('--dataset', type=str, default='SVHN_MNIST_text', help="name of the dataset")
+parser.add_argument('--dataset', type=str, default='SVHN_MNIST', help="name of the dataset")
 
 # DATA DEPENDENT
 # to be set by experiments themselves
