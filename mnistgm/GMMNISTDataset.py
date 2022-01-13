@@ -161,7 +161,7 @@ class GMMNIST(VisionDataset):
         else:
             target = target_mnist
 
-        batch = {'mnist': img_mnist, 'gm': vec_gm}
+        batch = {'mnist': img_mnist/255, 'gm': vec_gm}
         return batch, target
 
     def __len__(self):
