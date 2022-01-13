@@ -15,7 +15,7 @@ echo "TMPDIR: $TMPDIR"
 
 METHOD="joint_elbo"  # NOTE: valid options are "joint_elbo", "poe", and "moe"
 LIKELIHOOD_M1="laplace"
-LIKELIHOOD_M2="laplace"
+LIKELIHOOD_M2="normal"
 DIR_DATA="$PWD/data"
 DIR_CLF="$PWD/trained_classifiers/trained_clfs_mst"
 DIR_EXPERIMENT="$PWD/runs/MNIST_GM/${METHOD}/non_factorized/${LIKELIHOOD_M1}_${LIKELIHOOD_M2}"

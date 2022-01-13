@@ -7,7 +7,7 @@ data_dim = 2
 class EncGM(nn.Module):
     def __init__(self, flags):
         super(EncGM, self).__init__()
-        self.flags = flags
+        self.flags = flags 
         assert not flags.factorized_representation
         self.latent_dim = flags.class_dim
         self.emb_dim = flags.emb_dim

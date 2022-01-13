@@ -21,4 +21,4 @@ class GM(Modality):
 
 
     def plot_data(self, d):
-        return d
+        return 0

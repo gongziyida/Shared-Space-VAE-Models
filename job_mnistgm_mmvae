@@ -15,7 +15,7 @@ echo "TMPDIR: $TMPDIR"
 
 METHOD="moe"  # NOTE: valid options are "joint_elbo", "poe", and "moe"
 LIKELIHOOD_M1="laplace"
-LIKELIHOOD_M2="laplace"
+LIKELIHOOD_M2="normal"
 DIR_DATA="$PWD/data"
 DIR_CLF="$PWD/trained_classifiers/trained_clfs_mst"
 DIR_EXPERIMENT="$PWD/runs/MNIST_GM/${METHOD}/non_factorized/${LIKELIHOOD_M1}_${LIKELIHOOD_M2}"
@@ -31,7 +31,7 @@ python3 main_gmmnist.py --dir_data=$TMPDIR \
 			--method=$METHOD \
 			--style_m1_dim=0 \
 			--style_m2_dim=0 \
-			--class_dim=20 \
+			--class_dim=2 \
 			--beta=1 \
 			--likelihood_m1=$LIKELIHOOD_M1 \
 			--likelihood_m2=$LIKELIHOOD_M2 \
