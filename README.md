@@ -14,4 +14,6 @@ unzip data_mnistsvhntext.zip -d data/
 (This comes with the other datasets. Remove them to save space. I will upload needed ones separately in the future.)
 
 2. Modify & run the script
-See `job_*` and `main_*.py` for examples.
+See `job_*` and `main_*.py` for examples on how to train them.
+
+`alphabet.json` and the related are reserved for future.
