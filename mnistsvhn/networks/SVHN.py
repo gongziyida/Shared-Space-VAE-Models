@@ -27,8 +27,8 @@ class EncSVHN(nn.Module):
     def forward(self, x):
         x = self.enc(x)
         # Be careful not to squeeze the batch dimension if batch size = 1
-        mu = self.enc_mu(x).squeeze(3).squeeze(2)
-        log_var = self.enc_var(x).squeeze(3).squeeze(2)
+        mu = self.enc_mu(x).squeeze(-1).squeeze(-1)
+        log_var = self.enc_var(x).squeeze(-1).squeeze(-1)
         return None, None, mu, log_var
     
 class DecSVHN(nn.Module):
@@ -37,7 +37,6 @@ class DecSVHN(nn.Module):
         self.flags = flags
         assert not flags.factorized_representation
         self.latent_dim = flags.class_dim
-        
         n_channels = (self.latent_dim, 128, 64, 32, 3)
         kernels = (4, 4, 4, 4)
         strides = (1, 2, 2, 2)
@@ -51,6 +50,6 @@ class DecSVHN(nn.Module):
         self.dec = nn.Sequential(*li)
         
     def forward(self, _, z):
-        z = z.view(z.size(0), z.size(1), 1, 1)
+        z = z.view(z.shape[0], z.shape[1], 1, 1)
         x_hat = self.dec(z)
         return x_hat, torch.tensor(0.75).to(z.device)

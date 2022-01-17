@@ -43,7 +43,7 @@ python3 main_svhnmnist.py --dir_data=$TMPDIR \
 			--initial_learning_rate=0.001 \
 			--eval_freq=1 \
 			--eval_freq_fid=1 \
-			--data_multiplications=20 \
+			--data_multiplications=1 \
 			--num_hidden_layers=1 \
-			--end_epoch=10 \
+			--end_epoch=30 \
 

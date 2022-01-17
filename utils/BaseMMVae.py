@@ -223,7 +223,10 @@ class BaseMMVae(ABC, nn.Module):
                                 dim=0);
         #weights = (1/float(len(mus)))*torch.ones(len(mus)).to(self.flags.device);
         weights = (1/float(mus.shape[0]))*torch.ones(mus.shape[0]).to(self.flags.device);
+        # print(mus[:, 1 if mus.shape[1] > 1 else 0, :])
+        # print(logvars[:, 1 if mus.shape[1] > 1 else 0, :])
         joint_mu, joint_logvar = self.moe_fusion(mus, logvars, weights);
+        # joint_mu, joint_logvar = self.modality_fusion(mus, logvars, weights);
         #mus = torch.cat(mus, dim=0);
         #logvars = torch.cat(logvars, dim=0);
         latents['mus'] = mus;

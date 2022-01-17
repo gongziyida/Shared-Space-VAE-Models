@@ -64,22 +64,31 @@ def mixture_component_selection(flags, mus, logvars, w_modalities=None):
     num_samples = mus.shape[1];
     if w_modalities is None:
         w_modalities = torch.Tensor(flags.alpha_modalities).to(flags.device);
-    idx_start = [];
-    idx_end = []
-    for k in range(0, num_components):
-        if k == 0:
-            i_start = 0;
-        else:
-            i_start = int(idx_end[k-1]);
-        if k == w_modalities.shape[0]-1:
-            i_end = num_samples;
-        else:
-            i_end = i_start + int(torch.floor(num_samples*w_modalities[k]));
-        idx_start.append(i_start);
-        idx_end.append(i_end);
-    idx_end[-1] = num_samples;
-    mu_sel = torch.cat([mus[k, idx_start[k]:idx_end[k], :] for k in range(w_modalities.shape[0])]);
-    logvar_sel = torch.cat([logvars[k, idx_start[k]:idx_end[k], :] for k in range(w_modalities.shape[0])]);
+    mu_sel, logvar_sel = 0, 0
+    for k in range(w_modalities.shape[0]):
+        mu_sel += mus[k] * w_modalities[k]
+        logvar_sel += logvars[k] * w_modalities[k]
+    # idx_start = [];
+    # idx_end = []
+    # for k in range(0, num_components):
+    #     if k == 0:
+    #         i_start = 0;
+    #     else:
+    #         i_start = int(idx_end[k-1]);
+    #     if k == w_modalities.shape[0]-1:
+    #         i_end = num_samples;
+    #     else:
+    #         i_end = i_start + int(torch.floor(num_samples*w_modalities[k]));
+    #     idx_start.append(i_start);
+    #     idx_end.append(i_end);
+    # idx_end[-1] = num_samples;
+    # print(w_modalities)
+    # print(idx_start)
+    # print(idx_end)
+    # mu_sel = torch.cat([mus[k, idx_start[k]:idx_end[k], :] for k in range(w_modalities.shape[0])]);
+    # logvar_sel = torch.cat([logvars[k, idx_start[k]:idx_end[k], :] for k in range(w_modalities.shape[0])]);
+    # print(mu_sel.shape)
+    # print(logvar_sel.shape)
     return [mu_sel, logvar_sel];
 
 

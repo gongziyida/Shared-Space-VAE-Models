@@ -139,7 +139,7 @@ def basic_routine_epoch(exp, batch):
     out_basic_routine = dict();
     out_basic_routine['results'] = results;
     out_basic_routine['log_probs'] = log_probs;
-    out_basic_routine['total_loss'] = total_loss;
+    out_basic_routine['total_loss'] = total_loss # * exp.flags.batch_size
     out_basic_routine['klds'] = klds;
     return out_basic_routine;
 

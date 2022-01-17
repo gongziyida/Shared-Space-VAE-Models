@@ -210,7 +210,7 @@ class SVHNMNIST(VisionDataset):
         else:
             target = target_mnist;
 
-        batch = {'mnist': img_mnist/255, 'svhn': img_svhn/255}
+        batch = {'mnist': img_mnist, 'svhn': img_svhn}
         return batch, target
 
     def __len__(self):
