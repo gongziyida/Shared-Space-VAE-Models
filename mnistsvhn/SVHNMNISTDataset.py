@@ -67,15 +67,11 @@ class VisionDataset(data.Dataset):
         return ""
 
 
-class SVHNMNIST(VisionDataset):
-    training_file_svhn_idx = 'train-ms-svhn-idx.pt';
-    training_file_mnist_idx = 'train-ms-mnist-idx.pt';
-    training_file_mnist = 'training.pt';
-    training_file_svhn = 'train_32x32.mat';
-    test_file_mnist_idx = 'test-ms-mnist-idx.pt';
-    test_file_svhn_idx = 'test-ms-svhn-idx.pt';
-    test_file_mnist = 'test.pt';
-    test_file_svhn = 'test_32x32.mat';
+class MNISTSVHNDataset(VisionDataset):
+    training_file_mnist = 'train.pt'
+    training_file_svhn = 'train_32x32.mat'
+    test_file_mnist = 'test.pt'
+    test_file_svhn = 'test_32x32.mat'
     classes = ['0 - zero', '1 - one', '2 - two', '3 - three', '4 - four',
                '5 - five', '6 - six', '7 - seven', '8 - eight', '9 - nine']
 
@@ -110,18 +106,20 @@ class SVHNMNIST(VisionDataset):
         return self.data_mnist
 
     def __init__(self, flags,  alphabet, train=True, transform=None, target_transform=None):
-        super(SVHNMNIST, self).__init__(flags.dir_data)
-        self.flags = flags;
-        self.dataset = 'MNIST_SVHN';
-        self.dataset_mnist = 'MNIST';
-        self.dataset_svhn = 'SVHN';
+        super(MNISTSVHNDataset, self).__init__(flags.dir_data)
+        self.flags = flags
+        self.dataset = 'MNIST_SVHN'
+        self.dataset_mnist = 'MNIST'
+        self.dataset_svhn = 'SVHN'
         self.len_sequence = flags.len_sequence
         self.transform = transform
         self.target_transform = target_transform
         self.train = train  # training set or test set
-        self.alphabet = alphabet;
+        self.alphabet = alphabet
 
-        self.dir_svhn = os.path.join(self.root, self.dataset_svhn);
+        self.dir_svhn = os.path.join(self.root, self.dataset_svhn)
+        self.dir_mnist = os.path.join(self.root, self.dataset_mnist)
+        print(self.dir_mnist)
         print(self.dir_svhn)
 
         if not self._check_exists_mnist():
@@ -131,21 +129,16 @@ class SVHNMNIST(VisionDataset):
 
 
         if self.train:
-            id_file_svhn = self.training_file_svhn_idx;
-            id_file_mnist = self.training_file_mnist_idx;
-            data_file_svhn = self.training_file_svhn;
-            data_file_mnist = self.training_file_mnist;
+            data_file_svhn = self.training_file_svhn
+            data_file_mnist = self.training_file_mnist
         else:
-            id_file_svhn = self.test_file_svhn_idx;
-            id_file_mnist = self.test_file_mnist_idx;
-            data_file_svhn = self.test_file_svhn;
-            data_file_mnist = self.test_file_mnist;
+            data_file_svhn = self.test_file_svhn
+            data_file_mnist = self.test_file_mnist
 
         # import here rather than at top of file because this is
         # an optional dependency for torchvision
         import scipy.io as sio
 
-        print(os.path.join(self.dir_svhn, data_file_svhn))
         # reading(loading) mat file as array
         loaded_mat = sio.loadmat(os.path.join(self.dir_svhn, data_file_svhn))
 
@@ -161,15 +154,15 @@ class SVHNMNIST(VisionDataset):
         # which expect the class labels to be in the range [0, C-1]
         np.place(self.labels_svhn, self.labels_svhn == 10, 0)
         self.data_svhn = np.transpose(self.data_svhn, (3, 2, 0, 1))
-        samples_svhn = self.data_svhn.shape[0];
-        channels_svhn = self.data_svhn.shape[1];
-        width_svhn = self.data_svhn.shape[2];
-        height_svhn = self.data_svhn.shape[3];
+        samples_svhn = self.data_svhn.shape[0]
+        channels_svhn = self.data_svhn.shape[1]
+        width_svhn = self.data_svhn.shape[2]
+        height_svhn = self.data_svhn.shape[3]
 
-        self.data_mnist, self.labels_mnist = torch.load(os.path.join(self.processed_folder, data_file_mnist));
+        self.data_mnist, self.labels_mnist = torch.load(os.path.join(self.dir_mnist, data_file_mnist))
 
         # # get transformed indices
-        self.labels_svhn = torch.LongTensor(self.labels_svhn);
+        self.labels_svhn = torch.LongTensor(self.labels_svhn)
         mnist_l, mnist_li = self.labels_mnist.sort()
         svhn_l, svhn_li = self.labels_svhn.sort()
         self.mnist_idx, self.svhn_idx = rand_match_on_idx(mnist_l, mnist_li,
@@ -184,10 +177,10 @@ class SVHNMNIST(VisionDataset):
         Returns:
             tuple: (image, target) where target is index of the target class.
         """
-        idx_mnist = self.mnist_idx[index];
-        idx_svhn = self.svhn_idx[index];
-        img_svhn, target_svhn = self.data_svhn[idx_svhn], int(self.labels_svhn[idx_svhn]);
-        img_mnist, target_mnist = self.data_mnist[idx_mnist], int(self.labels_mnist[idx_mnist]);
+        idx_mnist = self.mnist_idx[index]
+        idx_svhn = self.svhn_idx[index]
+        img_svhn, target_svhn = self.data_svhn[idx_svhn], int(self.labels_svhn[idx_svhn])
+        img_mnist, target_mnist = self.data_mnist[idx_mnist], int(self.labels_mnist[idx_mnist])
 
         # doing this so that it is consistent with all other datasets
         # to return a PIL Image
@@ -196,19 +189,19 @@ class SVHNMNIST(VisionDataset):
 
         if self.transform is not None:
             if self.transform[0] is not None:
-                img_mnist = self.transform[0](img_mnist);
-                img_svhn = self.transform[1](img_svhn);
+                img_mnist = self.transform[0](img_mnist)
+                img_svhn = self.transform[1](img_svhn)
 
         if target_mnist != target_svhn:
             print(target_svhn)
             print(target_mnist)
             print('targets do not match...exit')
-            sys.exit();
+            sys.exit()
 
         if self.target_transform is not None:
             target = self.target_transform(target_mnist)
         else:
-            target = target_mnist;
+            target = target_mnist
 
         batch = {'mnist': img_mnist, 'svhn': img_svhn}
         return batch, target
@@ -217,21 +210,13 @@ class SVHNMNIST(VisionDataset):
         return len(self.mnist_idx)
 
     @property
-    def raw_folder(self):
-        return os.path.join(self.root, self.dataset, 'raw')
-
-    @property
-    def processed_folder(self):
-        return os.path.join(self.root, self.dataset_mnist, 'processed')
-
-    @property
     def class_to_idx(self):
         return {_class: i for i, _class in enumerate(self.classes)}
 
     def _check_exists_mnist(self):
-        return (os.path.exists(os.path.join(self.processed_folder,
+        return (os.path.exists(os.path.join(self.dir_mnist,
                                             self.training_file_mnist)) and
-                os.path.exists(os.path.join(self.processed_folder,
+                os.path.exists(os.path.join(self.dir_mnist,
                                             self.test_file_mnist)))
 
     def _check_exists_svhn(self):

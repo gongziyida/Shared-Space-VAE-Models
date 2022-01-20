@@ -20,8 +20,8 @@ parser.add_argument('--likelihood_m2', type=str, default='laplace', help="output
 # Gaussian mixture
 parser.add_argument('--emb_dim', type=int, default=8, help="dimension of the embedded Gaussian mixtures")
 parser.add_argument('--GM_sample_size', type=int, default=800, help="sample size of the Gaussian mixtures")
-parser.add_argument('--GM_radius', type=int, default=1, help="radius of the circle along which the Gaussian mixtures align")
-parser.add_argument('--GM_var', type=int, default=1/400, help="variance of the Gaussian mixtures")
+parser.add_argument('--GM_radius', type=int, default=3, help="radius of the circle along which the Gaussian mixtures align")
+parser.add_argument('--GM_var', type=int, default=1/5, help="variance of the Gaussian mixtures")
 
 # SAVE and LOAD
 # to bet set by experiments themselves
@@ -38,4 +38,3 @@ parser.add_argument('--beta_m2_style', type=float, default=1.0, help="default we
 parser.add_argument('--div_weight_m1_content', type=float, default=1, help="default weight divergence term content modality 1")
 parser.add_argument('--div_weight_m2_content', type=float, default=1, help="default weight divergence term content modality 2")
 parser.add_argument('--div_weight_uniform_content', type=float, default=1, help="default weight divergence term prior")
-

@@ -16,7 +16,7 @@ from sklearn.metrics import accuracy_score
 from modalities.MNIST import MNIST
 from modalities.SVHN import SVHN
 
-from mnistsvhn.SVHNMNISTDataset import SVHNMNIST
+from mnistsvhn.SVHNMNISTDataset import MNISTSVHNDataset
 from mnistsvhn.networks.VAEbimodalSVHNMNIST import VAEbimodalSVHNMNIST
 from mnistsvhn.networks.ClfMNIST import ClfMNIST
 from mnistsvhn.networks.ClfSVHN import ClfSVHN
@@ -63,9 +63,9 @@ class MNISTSVHN(BaseExperiment):
 
     def set_modalities(self):
         mod1 = MNIST('mnist', EncMNIST(self.flags), DecMNIST(self.flags),
-                    self.flags.class_dim, self.flags.style_m1_dim, 'laplace');
+                    self.flags.class_dim, self.flags.style_m1_dim, self.flags.likelihood_m1);
         mod2 = SVHN('svhn', EncSVHN(self.flags), DecSVHN(self.flags),
-                    self.flags.class_dim, self.flags.style_m2_dim, 'laplace',
+                    self.flags.class_dim, self.flags.style_m2_dim, self.flags.likelihood_m2,
                     self.plot_img_size);
         mods = {mod1.name: mod1, mod2.name: mod2};
         return mods;
@@ -88,11 +88,11 @@ class MNISTSVHN(BaseExperiment):
         transform_mnist = self.get_transform_mnist();
         transform_svhn = self.get_transform_svhn();
         transforms = [transform_mnist, transform_svhn];
-        train = SVHNMNIST(self.flags,
+        train = MNISTSVHNDataset(self.flags,
                           self.alphabet,
                           train=True,
                           transform=transforms)
-        test = SVHNMNIST(self.flags,
+        test = MNISTSVHNDataset(self.flags,
                          self.alphabet,
                          train=False,
                          transform=transforms)
@@ -135,7 +135,7 @@ class MNISTSVHN(BaseExperiment):
         for k, m_key in enumerate(self.modalities.keys()):
             mod = self.modalities[m_key];
             numel_mod = mod.data_size.numel()
-            rec_weights[mod.name] = float(ref_mod_d_size/numel_mod)
+            rec_weights[mod.name] = float(ref_mod_d_size/numel_mod) if self.flags.reweight_rec else 1
         return rec_weights;
 
 

@@ -53,8 +53,8 @@ class VisionDataset(data.Dataset):
         return ""
 
 
-class GMMNIST(VisionDataset):
-    training_file_mnist = 'training.pt'
+class MNISTGMDataset(VisionDataset):
+    training_file_mnist = 'train.pt'
     test_file_mnist = 'test.pt'
     classes = ['1 - one', '2 - two', '3 - three', '4 - four',
                '5 - five', '6 - six', '7 - seven', '8 - eight']
@@ -90,7 +90,7 @@ class GMMNIST(VisionDataset):
         return self.data_mnist
 
     def __init__(self, flags,  alphabet, train=True, transform=None, target_transform=None):
-        super(GMMNIST, self).__init__(flags.dir_data)
+        super(MNISTGMDataset, self).__init__(flags.dir_data)
         self.flags = flags
         self.dataset = 'MNIST_GM'
         self.dataset_mnist = 'MNIST'
@@ -102,6 +102,8 @@ class GMMNIST(VisionDataset):
         self.train = train  # training set or test set
         self.alphabet = alphabet
 
+        self.dir_mnist = os.path.join(self.root, self.dataset_mnist)
+        
         if not self._check_exists_mnist():
             raise RuntimeError('Dataset MNIST not found.')
 
@@ -111,7 +113,7 @@ class GMMNIST(VisionDataset):
             data_file_mnist = self.test_file_mnist
 
         # Load the pt for MNIST
-        self.data_mnist, self.labels_mnist = torch.load(os.path.join(self.processed_folder, data_file_mnist))
+        self.data_mnist, self.labels_mnist = torch.load(os.path.join(self.dir_mnist, data_file_mnist))
         self.data_mnist = self.data_mnist[(self.labels_mnist!=0)&(self.labels_mnist!=9),:,:]
         self.labels_mnist = self.labels_mnist[(self.labels_mnist!=0)&(self.labels_mnist!=9)]
         
@@ -168,23 +170,15 @@ class GMMNIST(VisionDataset):
         return len(self.data_mnist) * self.flags.data_multiplications
 
     @property
-    def raw_folder(self):
-        return os.path.join(self.root, self.dataset, 'raw')
-
-    @property
-    def processed_folder(self):
-        return os.path.join(self.root, self.dataset_mnist, 'processed')
-
-    @property
     def class_to_idx(self):
         return {_class: i for i, _class in enumerate(self.classes)}
 
     def _check_exists_mnist(self):
-        return (os.path.exists(os.path.join(self.processed_folder,
+        return (os.path.exists(os.path.join(self.dir_mnist,
                                             self.training_file_mnist)) and
-                os.path.exists(os.path.join(self.processed_folder,
+                os.path.exists(os.path.join(self.dir_mnist,
                                             self.test_file_mnist)))
-
+    
     @staticmethod
     def extract_gzip(gzip_path, remove_finished=False):
         print('Extracting {}'.format(gzip_path))

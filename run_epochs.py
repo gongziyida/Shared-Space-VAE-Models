@@ -3,6 +3,7 @@ import numpy as np
 from itertools import cycle
 import json
 import random
+from tqdm import tqdm
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -220,8 +221,8 @@ def run_epochs(exp):
     tb_logger.writer.add_text('FLAGS', str_flags, 0)
 
     print('training epochs progress:')
-    for epoch in range(exp.flags.start_epoch, exp.flags.end_epoch):
-        utils.printProgressBar(epoch, exp.flags.end_epoch)
+    for epoch in tqdm(range(exp.flags.start_epoch, exp.flags.end_epoch)):
+        # utils.printProgressBar(epoch, exp.flags.end_epoch)
         # one epoch of training and testing
         train(epoch, exp, tb_logger);
         test(epoch, exp, tb_logger);

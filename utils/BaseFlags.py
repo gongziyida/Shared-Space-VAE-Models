@@ -15,6 +15,7 @@ parser.add_argument('--beta_1', type=float, default=0.9, help="default beta_1 va
 parser.add_argument('--beta_2', type=float, default=0.999, help="default beta_2 val for adam")
 parser.add_argument('--start_epoch', type=int, default=0, help="flag to set the starting epoch for training")
 parser.add_argument('--end_epoch', type=int, default=100, help="flag to indicate the final epoch of training")
+parser.add_argument('--reweight_rec', type=int, default=1, help="If reweight recstruction loss")
 
 # DATA DEPENDENT
 parser.add_argument('--class_dim', type=int, default=20, help="dimension of common factor latent space")

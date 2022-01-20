@@ -16,7 +16,7 @@ from sklearn.metrics import accuracy_score
 from modalities.MNIST import MNIST
 from modalities.GM import GM
 
-from mnistgm.GMMNISTDataset import GMMNIST
+from mnistgm.GMMNISTDataset import MNISTGMDataset
 from mnistgm.networks.VAEbimodalGMMNIST import VAEbimodalGMMNIST
 from mnistgm.networks.ClfMNIST import ClfMNIST
 from mnistgm.networks.ClfGM import ClfGM
@@ -63,9 +63,9 @@ class MNISTGM(BaseExperiment):
 
     def set_modalities(self):
         mod1 = MNIST('mnist', EncMNIST(self.flags), DecMNIST(self.flags),
-                    self.flags.class_dim, self.flags.style_m1_dim, 'laplace')
+                    self.flags.class_dim, self.flags.style_m1_dim, self.flags.likelihood_m1)
         mod2 = GM('gm', EncGM(self.flags), DecGM(self.flags),
-                    self.flags.class_dim, self.flags.style_m2_dim, 'normal')
+                    self.flags.class_dim, self.flags.style_m2_dim, self.flags.likelihood_m2)
         mods = {mod1.name: mod1, mod2.name: mod2}
         return mods
 
@@ -87,11 +87,11 @@ class MNISTGM(BaseExperiment):
         transform_mnist = self.get_transform_mnist()
         transform_gm = self.get_transform_gm()
         transforms = [transform_mnist, transform_gm]
-        train = GMMNIST(self.flags,
+        train = MNISTGMDataset(self.flags,
                           self.alphabet,
                           train=True,
                           transform=transforms)
-        test = GMMNIST(self.flags,
+        test = MNISTGMDataset(self.flags,
                          self.alphabet,
                          train=False,
                          transform=transforms)
@@ -132,7 +132,7 @@ class MNISTGM(BaseExperiment):
         for k, m_key in enumerate(self.modalities.keys()):
             mod = self.modalities[m_key]
             numel_mod = mod.data_size.numel()
-            rec_weights[mod.name] = float(ref_mod_d_size/numel_mod)
+            rec_weights[mod.name] = float(ref_mod_d_size/numel_mod) if self.flags.reweight_rec else 1
         return rec_weights
 
 
