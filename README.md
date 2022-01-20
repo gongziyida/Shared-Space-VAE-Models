@@ -13,6 +13,10 @@ unzip data_mnistsvhntext.zip -d data/
 ```
 (This comes with the other datasets. Remove them to save space. I will upload needed ones separately in the future.)
 
+Now it is not necessary to put the data in the `data/` folder. Edit the data pat in `job_*`.
+
+It is also not necessary to prepare the pretrained classifier models, which is included in the zip file in the drop box, if you do not need them.
+
 2. Modify & run the script
 See `job_*` and `main_*.py` for examples on how to train them.
 
