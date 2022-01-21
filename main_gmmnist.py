@@ -15,7 +15,6 @@ if __name__ == '__main__':
     FLAGS = parser.parse_args()
     use_cuda = torch.cuda.is_available();
     FLAGS.device = torch.device('cuda' if use_cuda else 'cpu');
-    print(FLAGS)
 
     if FLAGS.method == 'poe':
         FLAGS.modality_poe=True;

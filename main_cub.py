@@ -8,8 +8,8 @@ from run_epochs import run_epochs
 
 from utils.filehandling import create_dir_structure
 from utils.filehandling import create_dir_structure_testing
-from mnistsvhn.flags import parser
-from mnistsvhn.experiment import MNISTSVHN
+from cub.flags import parser
+from cub.experiment import CUB
 
 if __name__ == '__main__':
     FLAGS = parser.parse_args()
@@ -36,10 +36,7 @@ if __name__ == '__main__':
                               FLAGS.div_weight_m2_content];
 
     FLAGS = create_dir_structure(FLAGS)
-    alphabet_path = os.path.join(os.getcwd(), 'alphabet.json');
-    with open(alphabet_path) as alphabet_file:
-        alphabet = str(''.join(json.load(alphabet_file)))
-    mst = MNISTSVHN(FLAGS, alphabet);
+    mst = CUB(FLAGS);
     create_dir_structure_testing(mst);
     mst.set_optimizer();
     total_params = sum(p.numel() for p in mst.mm_vae.parameters())

@@ -2,31 +2,15 @@
 set -eo pipefail
 shopt -s nullglob globstar
 
-# define TMPDIR, if it's empty
-if [[ -z "$TMPDIR" ]]; then
-    TMPDIR="/tmp"
-fi
-echo "TMPDIR: $TMPDIR"
-
-# activate conda env
-# eval "$(conda shell.bash hook)"
-# conda activate mopoe
-# echo "CONDA_PREFIX: $CONDA_PREFIX"
-
 METHOD="joint_elbo"  # NOTE: valid options are "joint_elbo", "poe", and "moe"
 LIKELIHOOD_M1="laplace"
 LIKELIHOOD_M2="laplace"
 DIR_DATA="$HOME/Datasets"
 DIR_CLF="$PWD/trained_classifiers/trained_clfs_mst"
 DIR_EXPERIMENT="$PWD/runs/MNIST_SVHN/${METHOD}/${LIKELIHOOD_M1}_${LIKELIHOOD_M2}"
-DIR_FID="$TMPDIR/MNIST_SVHN"
+DIR_FID="$DIR_DATA/MNIST_SVHN"
 
-# copy data to $TMPDIR
-cp -r "${DIR_DATA}/MNIST" "${TMPDIR}/"
-cp -r "${DIR_DATA}/SVHN" "${TMPDIR}/"
-cp -r "${DIR_DATA}/MNIST_SVHN" "${TMPDIR}/"
-
-python3 main_svhnmnist.py --dir_data=$TMPDIR \
+python3 main_svhnmnist.py --dir_data=$DIR_DATA \
 			--dir_clf="$DIR_CLF" \
 			--dir_experiment="$DIR_EXPERIMENT" \
 			--dir_fid=$DIR_FID \

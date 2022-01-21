@@ -21,7 +21,7 @@ from eval_metrics.representation import test_clf_lr_all_subsets
 # from eval_metrics.sample_quality import calc_prd_score
 from eval_metrics.likelihood import estimate_likelihoods
 
-from plotting import generate_plots
+# from plotting import generate_plots
 
 from utils import utils
 from utils.TBLogger import TBLogger
@@ -191,8 +191,8 @@ def test(epoch, exp, tb_logger):
             log_probs = basic_routine['log_probs'];
             tb_logger.write_testing_logs(results, total_loss, log_probs, klds);
 
-        plots = generate_plots(exp, epoch);
-        tb_logger.write_plots(plots, epoch);
+        # plots = generate_plots(exp, epoch);
+        # tb_logger.write_plots(plots, epoch);
 
         if (epoch + 1) % exp.flags.eval_freq == 0 or (epoch + 1) == exp.flags.end_epoch:
             if exp.flags.eval_lr:

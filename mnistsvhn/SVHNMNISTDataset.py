@@ -207,7 +207,7 @@ class MNISTSVHNDataset(VisionDataset):
         return batch, target
 
     def __len__(self):
-        return len(self.mnist_idx)
+        return len(self.mnist_idx) - 1
 
     @property
     def class_to_idx(self):

@@ -59,35 +59,6 @@ class MNISTGMDataset(VisionDataset):
     classes = ['1 - one', '2 - two', '3 - three', '4 - four',
                '5 - five', '6 - six', '7 - seven', '8 - eight']
 
-    @property
-    def train_labels_mnist(self):
-        warnings.warn("train_labels has been renamed targets")
-        return self.targets_mnist
-
-    @property
-    def train_labels_gm(self):
-        warnings.warn("train_labels has been renamed targets")
-        return self.targets_gm
-
-    @property
-    def test_labels_mnist(self):
-        warnings.warn("test_labels has been renamed targets")
-        return self.targets_mnist
-
-    @property
-    def test_labels_gm(self):
-        warnings.warn("test_labels has been renamed targets")
-        return self.targets_gm
-
-    @property
-    def train_data(self):
-        warnings.warn("train_data has been renamed data")
-        return self.data_mnist
-
-    @property
-    def test_data(self):
-        warnings.warn("test_data has been renamed data")
-        return self.data_mnist
 
     def __init__(self, flags,  alphabet, train=True, transform=None, target_transform=None):
         super(MNISTGMDataset, self).__init__(flags.dir_data)
@@ -167,7 +138,7 @@ class MNISTGMDataset(VisionDataset):
         return batch, target
 
     def __len__(self):
-        return len(self.data_mnist) * self.flags.data_multiplications
+        return len(self.data_mnist) * self.flags.data_multiplications - 1
 
     @property
     def class_to_idx(self):

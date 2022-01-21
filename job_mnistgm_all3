@@ -1,3 +1,5 @@
-./job_mnistgm_mopovae
-./job_mnistgm_mvae
-./job_mnistgm_mmvae
+for i in {0..8}; do
+    ./job_mnistgm_mopovae
+    ./job_mnistgm_mvae
+    ./job_mnistgm_mmvae
+done
